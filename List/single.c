@@ -39,7 +39,6 @@ int ListEmpty(LinkList list) {
 int ClearList(LinkList list) {
 	int i;
 	Node *s = malloc(sizeof(Node));
-
 	for (i = list->data; i > 0; i--) {
 		s = list->next;
 		list->next = s->next;
@@ -54,7 +53,6 @@ int ClearList(LinkList list) {
 int GetElem(LinkList list, int i, int *e) {
 	int j;
 	Node *p = list;
-
 	if (i >= list->data) {
 		return 0;
 	}
@@ -103,15 +101,13 @@ int ListInsert(LinkList list, int i, int e) {
 int ListDelete(LinkList list, int i, int *e) {
 	int j;
 	Node *p = list;
-	Node *s = malloc(sizeof(Node));
-
 	if (i >= list->data) {
 		return 0;
 	}
 	for (j = 0; j < i; j++) {
 		p = p->next;
 	}
-	s = p->next;
+	Node *s = s = p->next;
 	p->next = s->next;
 	list->data--;
 	*e = s->data;

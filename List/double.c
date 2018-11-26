@@ -55,7 +55,6 @@ int ClearList(LinkList list) {
 int GetElem(LinkList list, int i, int *e) {
 	int j;
 	Node *p = list;
-
 	if (i >= list->data) {
 		return 0;
 	}
@@ -109,9 +108,11 @@ int ListInsert(LinkList list, int i, int e) {
 
 /* 删除 */
 int ListDelete(LinkList list, int i, int *e) {
+	// p：要删除位置i的前一个结点
+	// s：要删除的结点
+	// q：要删除位置i的后一个结点
 	int j;
 	Node *p = list;
-	Node *s = malloc(sizeof(Node));
 
 	if (i >= list->data) {
 		return 0;
@@ -121,9 +122,9 @@ int ListDelete(LinkList list, int i, int *e) {
 	}
 	Node *q = p->next->next;
 
-	s = p->next;
+	Node *s = p->next;
 	p->next = q;
-	q->prior = q;
+	q->prior = p;
 	list->data--;
 	*e = s->data;
 	free(s);
