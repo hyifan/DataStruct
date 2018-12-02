@@ -22,7 +22,7 @@ typedef struct Node *LinkList;
 
 /* 初始化 */
 LinkList InitList() {
-	LinkList list = malloc(sizeof(*list));
+	LinkList list = malloc(sizeof(LinkList));
 	list->data = 0;
 	list->next = NULL;
 	return list;

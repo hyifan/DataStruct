@@ -1,7 +1,6 @@
-List：线性表
-Stack&Queue：栈和队列
-String：串
-Tree：树
-Graph：图
-Search：查找
-Sort：排序算法
+List：线性表</br>
+String：串</br>
+Tree：树</br>
+Graph：图</br>
+Search：查找</br>
+Sort：排序算法</br>
