@@ -5,52 +5,68 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 #define MAXSIZE 20 /*存储空间初始化分配量*/
 
 
-typedef struct String
-{
-	*char data[] = malloc(sizeof(MAXSIZE));
-	int length;
-	int maxsize;
+typedef struct String {
+    int length;
+    int size;
+    char *data;
 } String;
 
 
-/* 生成一个其值等于字符串常量chars的串 */
-String *InitString(char *chars) {
-	String *S = malloc(sizeof(String));
-	int i = 0;
-	int j = 0;
-	char *p = *chars;
+/* 初始化 */
+String *InitString() {
+	String *S;
+    S = malloc(sizeof(String));
+    S->length = 0;
+    S->size = MAXSIZE;
+    S->data = malloc(MAXSIZE);
+    return S;
+}
 
-	do {
-		j++;
-		S->maxsize = MAXSIZE * j;
-		if (j != 1) {
-			S->data = (char *)realloc(S->data, S->maxsize);
-		}
-		while (*p != '\0' && i < S->maxsize) {
-			S->data[i] = *p;
-			i++;
-			*p = *(p + 1);
-		}
-	} while (i == S->maxsize && *p != '\0');
+/* 生成一个其值等于字符串常量str的串S */
+int StrAssign(String *S, char *str) {
+    int length = strlen(str);
 
-	S->length = i;
-	return S;
+    if (S->size < length) {
+        int newsize = S->size + length;
+        char *newdata = realloc(S->data, newsize);
+        S->size = newsize;
+        S->data = newdata;
+    }
+
+    memcpy(S->data, str, length);
+    S->length += length;
+	return 1;
 }
 
 
 /* 串S存在，由串S复制得串T */
 int StrCopy(String *T, String *S) {
-	T = S;
+	if (T->size < S->length) {
+		int newsize = S->length;
+        char *newdata = realloc(T->data, newsize);
+        T->size = newsize;
+        T->data = newdata;
+	}
+
+	int i;
+	for (i=0; i<S->length; i++) {
+		T->*(data+i) = S->*(data+i);
+	}
 	return 1;
 }
 
 
 /* 串S存在，将串清空 */
 int ClearString(String *S) {
+    free(S->data);
     S->length = 0;
+    S->size = MAXSIZE;
+    S->data = malloc(MAXSIZE);
 	return 1;
 }
 
@@ -62,26 +78,46 @@ int StringEmpty(String *S) {
 
 
 /* 若S>T，返回值>0，若S=T，返回0，若S<T，返回值<0 */
-int StrCompare(S, T) {
-
+int StrCompare(String *S, String *T) {
+	int length = S->length > T->length ? T->length : S->length;
+	int i;
+	for (int i = 0; i<length; i++) {
+		if (S->*(data+i) > T->*(data+i)) {
+			return 1;
+		} else if (S->*(data+i) < T->*(data+i)) {
+			return -1;
+		}
+	}
+	if (S->length > T->length) {
+		return 1;
+	} else if (S->length == T->length) {
+		return 0;
+	} else {
+		return -1;
+	}
 }
 
 
-/* 用T返回由S1和S2连接而成的新串 */
+/* 用T返回由串S1和串S2连接而成的新串 */
 int Concat(String *T, String *S1, String *S2) {
-	if (S1->length + S2->length < MAXSIZE) {
-		return 0;
+    int length = S1->length + S2->length;
+
+    if (T->size < length) {
+        int newsize = length;
+        char *newdata = realloc(T->data, newsize);
+        T->size = newsize;
+        T->data = newdata;
+    }
+
+    int i, j;
+	for (i=0; i<S1->length; i++) {
+		T->*(data+i) = S1->*(data+i);
 	}
-	int i = 0;
-	while (i < S1->length) {
-		T->data[i] = S1->data[i];
-		i++;
+	for (j=0; i<S2->length; j++) {
+		T->*(data+i+j) = S2->*(data+j);
 	}
-	while (i < S1->length + S2->length) {
-		T->data[i] = S2->data[i - S1->length];
-		i++;
-	}
-	T->length = S1->length + S2->length;
+
+    T->length = length;
 	return 1;
 }
 
@@ -117,44 +153,26 @@ int StrDelete(S, pos, len) {
 
 
 int main(int argc, char *argv[]) {
-	char chars[] = "hello";
-	String *string = InitString(&chars[0]);
-	free(chars);
+	String *S1 = InitString();
+	StrAssign(*S1, 'hello');
 
-	String *T = malloc(sizeof(String));
-	StrCopy(*T, *string);
+	String *T = InitString();
+	StrCopy(*T, *S1);
 
-	int i;
+	StrCompare(*T, *S1);
 
-	printf("insert：");
-	for (i = 0; i < 10; i++) {
-		ListInsert(list, i, i);
-		printf("%d ", i);
-	}
-	printf("\n");
+	int empty1 = StringEmpty(*T);
+	ClearString(*T);
+	int empty2 = StringEmpty(*T);
 
-	printf("delete：");
-	for (i = 5; i >= 0; i--) {
-		int elem;
-		ListDelete(list, i, &elem);
-		printf("%d ", elem);
-	}
-	printf("\n");
+	String *S2 = InitString();
+	StrAssign(*S2, ' world!');
+	Concat(*T, *S1, *S2);
 
-	printf("get：");
-	for (i = 0; i < list->length; i++) {
-		int elem;
-		GetElem(list, i, &elem);
-		printf("%d ", elem);
-	}
-	printf("\n");
 
-	int locate = LocateElem(list, 9);
-	int isEmpty1 = ListEmpty(list);
-	ClearList(list);
-	int isEmpty2 = ListEmpty(list);
-	printf("%d %d %d\n", locate, isEmpty1, isEmpty2);
 
-	free(list);
+	free(*S1);
+	free(*S2);
+	free(*T);
 }
 
