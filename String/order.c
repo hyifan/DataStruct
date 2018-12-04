@@ -5,9 +5,51 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+
 
 #define MAXSIZE 20 /*存储空间初始化分配量*/
+
+
+/* 辅助函数start */
+int strlen(char *str) {
+	// 计算str长度
+	int i;
+	for (i = 0; *(str+i) != '\0'; i++) {
+		;
+	}
+	return i;
+}
+
+
+void memcpy(char *data, char*str, length) {
+	// 将str的前length字符加在data后面
+	int i;
+	for (i = 0; i < length; i++) {
+		*(data+i) = *(str+i);
+	}
+}
+
+
+void get_next(String *T, int *next) {
+	int i,j;
+	i = 1;
+	j = 0;
+	next[1] = 0;
+	while (i < T[0]) {
+		if (j == 0 || T[i] == T[j]) {
+			i++;
+			j++;
+			if (T[i] != T[j]) {
+				next[i] = j;
+			} else {
+				next[i] = next[j];
+			}
+		} else {
+			j = next[j]
+		}
+	}
+}
+/* 辅助函数end */
 
 
 typedef struct String {
@@ -46,6 +88,9 @@ int StrAssign(String *S, char *str) {
 
 /* 串S存在，由串S复制得串T */
 int StrCopy(String *T, String *S) {
+	if (T->length > 0) {
+		return 0;
+	}
 	if (T->size < S->length) {
 		int newsize = S->length;
         char *newdata = realloc(T->data, newsize);
@@ -100,6 +145,9 @@ int StrCompare(String *S, String *T) {
 
 /* 用T返回由串S1和串S2连接而成的新串 */
 int Concat(String *T, String *S1, String *S2) {
+	if (T->length > 0) {
+		return 0;
+	}
     int length = S1->length + S2->length;
 
     if (T->size < length) {
@@ -122,21 +170,80 @@ int Concat(String *T, String *S1, String *S2) {
 }
 
 
-/* 串S存在，用Sub返回串S的第pos个字符起长度为len的子串 */
-int SubString(Sub, S, pos, len) {
-
+/* 串S存在，用Sub返回串S的第pos个字符起长度为length的子串 */
+int SubString(String *Sub, String *S, int pos, length) {
+	if (S->length - pos < length || Sub->length > 0) {
+		return 0;
+	}
+	if (Sub->size < length) {
+        int newsize = length;
+        char *newdata = realloc(Sub->data, newsize);
+        Sub->size = newsize;
+        Sub->data = newdata;
+    }
+	int i;
+	for (i = 0; i < len; i++) {
+		Sub->*(data+i) = S->*(data+pos+i);
+	}
+	Sub->length = length;
+	return 1;
 }
 
 
 /* 若主串S中存在和串T值相同的子串，则返回它在主串S中第pos个字符之后第一次出现的位置，否则返回-1 */
-int Index(S, T, pos) {
-
+/* 使用KMP模式匹配算法 */
+int Index(String *S, String *T, int pos) {
+	int i = pos;
+	int j = 1;
+	int next[255];
+	get_next(T, next);
+	while (i <= S[0] && j <= T[0]) {
+		if (j == 0 || S[i] == T[j]) {
+			i++;
+			j++;
+		} else {
+			j = next[j];
+		}
+	}
+	if (j > T[0]) {
+		return i-T[0];
+	} else {
+		return -1;
+	}
 }
 
 
 /* 用V替换主串S中出现的所有与T相等的不重叠的子串 */
-int Replace(S, T, V) {
+int Replace(String *S, String *T, String *V) {
+	int a[];
+	int i = 0;
+	int j = 0;
+	while (i = Index(S, T, i) >= 0) {
+		a[j] = i;
+		i = i + T->length;
+		j++;
+	}
+	if (j == 0) {
+		return 0;
+	}
 
+	int length;
+	if (V->length - T->length > 0) {
+		// 用长串替换短串，需判断内存是否足够
+		length = (V->length - T->length) * j;
+		if (S->size < S->length + length) {
+	        int newsize = S->length + length;
+	        char *newdata = realloc(S->data, newsize);
+	        S->size = newsize;
+	        S->data = newdata;
+	    }
+	    for (i = 0; i < j; i++) {
+
+	    }
+	} else {
+
+	}
+	return 1;
 }
 
 
@@ -146,9 +253,23 @@ int StrInsert(S, pos, T) {
 }
 
 
-/* 从串S中删除第pos个字符起长度为len的子串 */
-int StrDelete(S, pos, len) {
-
+/* 从串S中删除第pos个字符起长度为length的子串 */
+int StrDelete(String *S, int pos, int length) {
+	if (S->length - pos < length) {
+		return 0;
+	}
+	int i;
+	for (i = pos + length - 1; i > pos - 1; i--) {
+		free(S->(data+i));
+	}
+	S->length = S->length - length;
+	if (S->size > length && S->size > MAXSIZE) {
+        int newsize = MAXSIZE;
+        char *newdata = realloc(S->data, newsize);
+        S->size = newsize;
+        S->data = newdata;
+    }
+	return 1;
 }
 
 
