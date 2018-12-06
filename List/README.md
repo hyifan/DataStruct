@@ -1,8 +1,10 @@
 线性表(List)：<br/>
 零个或多个数据元素的有限序列。线性表的数据对象集合为{a1,a2,..,an}，其中，除第一个元素a1外，每个元素有且有一个直接前驱元素，除了最后一个元素an外，每个元素有且只有一个直接后续元素。
 <br/>
+<br/>
 
 该demo实现了顺序存储线性表(order.c)、单链表(single.c)、双向链表(double.c)、链栈(stack.c)、队列(queue.c)。
+<br/>
 <br/>
 
 order.c、single.c、double.c
@@ -17,6 +19,7 @@ Operation
     ListDelete(*L, i, *e)：删除线性表L中的第i个位置元素，并用e返回其值
 ```
 <br/>
+<br/>
 
 stack.c
 ```
@@ -29,6 +32,7 @@ Operation
     Pop(*L, *e)：删除栈L中栈顶元素，并用e返回其值
     LinkLength(L)：返回栈L的元素个数
 ```
+<br/>
 <br/>
 
 queue.c

@@ -79,7 +79,7 @@ int LocateElem(LinkList list, int e) {
 	return i;
 }
 
-/* 插入 */
+/* 插入：在线性表L中的第i个位置插入新元素e */
 int ListInsert(LinkList list, int i, int e) {
 	// p：要插入位置i的前一个结点
 	// q：要插入位置i的后一个结点

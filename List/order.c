@@ -60,7 +60,7 @@ int LocateElem(SqList *list, int e) {
 }
 
 
-/* 插入 */
+/* 插入：在线性表L中的第i个位置插入新元素e */
 int ListInsert(SqList *list, int i, int e) {
 	int k;
 	if (list->length == MAXSIZE || i < 0 || i > list->length) {
@@ -91,6 +91,14 @@ int ListDelete(SqList *list, int i, int *e) {
 	}
 	list->length--;
 	return 1;
+}
+
+
+/* 交换 list->data[i] 和 list->data[j] 的位置，为之后的排序算法做准备 */
+void swap(SqList *list, i, j) {
+	int i = list->data[i];
+	list->data[i] = list->data[j];
+	list->data[j] = i;
 }
 
 

@@ -9,7 +9,7 @@
 
 typedef struct Node
 {
-	int data;
+	char data;
 	struct Node *lchild, *rchild;
 } Node;
 
@@ -18,8 +18,8 @@ typedef struct Node *BiTree;
 
 
 /* 初始化 */
-BiTree InitList() {
-	BiTree tree = malloc(sizeof(*tree));
+BiTree *InitTree() {
+	BiTree tree = malloc(sizeof(BiTree));
 	tree->data = NULL;
 	tree->lchild = NULL;
 	tree->rchild = NULL;
@@ -35,7 +35,12 @@ int TreeEmpty(BiTree tree) {
 
 /* 清空树 */
 int ClearTree(BiTree tree) {
-	// 后序遍历，从左到右先叶子后结点的方式访问所有结点并删除
+	if (tree == NULL) {
+		return;
+	}
+	ClearTree(tree->lchild);
+	ClearTree(tree->rchild);
+	free(tree);
 	return 1;
 }
 
@@ -48,82 +53,111 @@ int TreeDepth(BiTree tree) {
 
 
 /* 返回Tree的根结点 */
-int Root(BiTree tree) {
-	return tree->data;
+Node Root(BiTree tree) {
+	Node *p;
+	p->data = tree->data;
+	p->lchild = tree->lchild;
+	p->rchild = tree->rchild
+	return p;
 }
 
-/* 插入c为树Tree中p指结点的第i棵子树（1是左子树，2为右子树） */
-int InsertChild(BiTree tree, *p, i, c) {
-	//p：要插入位置i的前一个结点
-	int j;
-	Node *p = list;
-	Node *s = malloc(sizeof(Node));
-	if (i > list->data) {
+/* 插入c为树Tree中p结点的第i棵子树（0是左子树，1为右子树） */
+int InsertChild(Node *p, int i, Node *c) {
+	if (i == 0) {
+		p->lchild = c;
+	} else if (i == 1) {
+		p->rchild = c;
+	} else {
 		return 0;
 	}
-	for (j = 0; j < i; j++) {
-		p = p->next;
-	}
-	s->data = e;
-	s->next = p->next;
-	p->next = s;
-	list->data++;
 	return 1;
 }
 
 
-/* 删除Tree中p指结点的第i棵子树 */
-int DeleteChild(BiTree tree, int *p, int i) {
-	int j;
-	Node *p = list;
-	if (i >= list->data) {
+/* 删除Tree中p结点的第i棵子树（0是左子树，1为右子树） */
+int DeleteChild(Node *p, int i) {
+	BiTree tree = InitTree();
+	if (i == 0 && p->lchild != NULL) {
+		tree->data = p->lchild->data;
+		tree->lchild = p->lchild->lchild;
+		tree->rchild = p->lchild->rchild;
+		p->lchild = NULL;
+	} else if (i == 1 && p->rchild != NULL) {
+		tree->data = p->rchild->data;
+		tree->lchild = p->rchild->lchild;
+		tree->rchild = p->rchild->rchild;
+		p->rchild = NULL;
+	} else {
 		return 0;
 	}
-	for (j = 0; j < i; j++) {
-		p = p->next;
-	}
-	Node *s = s = p->next;
-	p->next = s->next;
-	list->data--;
-	*e = s->data;
-	free(s);
+	ClearTree(tree);
+	free(tree);
 	return 1;
 }
 
 
 int main(int argc, char *argv[]) {
-	LinkList list = InitList();
+	BiTree tree = InitTree();
+	tree->data = 'A';
+	Node root = Root(tree);
+
+	/*
+	  插入结点，使树结构为
+		        A
+		    B        C
+		  D        E   F
+	    G
+	  H
+	*/
+	char data[7];
+	data[0] = 'B';
+	data[1] = 'C';
+	data[2] = 'D';
+	data[3] = 'E';
+	data[4] = 'F';
+	data[5] = 'G';
+	data[6] = 'H';
+
 	int i;
-
-	printf("insert：");
-	for (i = 0; i < 10; i++) {
-		ListInsert(list, i, i);
-		printf("%d ", i);
+	for (i = 0; i < 7; i++) {
+		Node *node = malloc(sizeof(Node));
+		node->data = data[i];
+		node->lchild = NULL;
+		node->rchild = NULL;
+		switch (i) {
+		    case 0:
+		    case 1:
+		        InsertChild(root, i, node);
+		        break;
+		    case 2:
+		        InsertChild(root->lchild, 0, node);
+		        break;
+		    case 3:
+		        InsertChild(root->rchild, 0, node);
+		        break;
+		    case 4:
+		        InsertChild(root->rchild, 1, node);
+		        break;
+		    case 5:
+		        InsertChild(root->lchild->lchild, 0, node);
+		        break;
+		    case 6:
+		        InsertChild(root->lchild->lchild->lchild, 0, node);
+		        break;
+		    default:;
+		}
 	}
-	printf("\n");
 
-	printf("delete：");
-	for (i = 5; i >= 0; i--) {
-		int elem;
-		ListDelete(list, i, &elem);
-		printf("%d ", elem);
-	}
-	printf("\n");
+	int depth1 = TreeDepth(tree);
+	DeleteChild(root->lchild->lchild->lchild, 0);
+	int depth2 = TreeDepth(tree);
 
-	printf("get：");
-	for (i = 0; i < list->data; i++) {
-		int elem;
-		GetElem(list, i, &elem);
-		printf("%d ", elem);
-	}
-	printf("\n");
+	int isEmpty1 = TreeEmpty();
+	ClearTree(tree);
+	int isEmpty2 = TreeEmpty();
 
-	int locate = LocateElem(list, 9);
-	int isEmpty1 = ListEmpty(list);
-	ClearList(list);
-	int isEmpty2 = ListEmpty(list);
-	printf("%d %d %d\n", locate, isEmpty1, isEmpty2);
+	printf("%d %d %d %d\n", depth1, depth2, isEmpty1, isEmpty2);
 
-	free(list);
+	free(tree);
 }
 

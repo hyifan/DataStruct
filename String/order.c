@@ -61,8 +61,7 @@ typedef struct String {
 
 /* 初始化 */
 String *InitString() {
-	String *S;
-    S = malloc(sizeof(String));
+	String *S = malloc(sizeof(String));
     S->length = 0;
     S->size = MAXSIZE;
     S->data = malloc(MAXSIZE);
@@ -227,29 +226,38 @@ int Replace(String *S, String *T, String *V) {
 		return 0;
 	}
 
-	int length;
-	if (V->length - T->length > 0) {
-		// 用长串替换短串，需判断内存是否足够
-		length = (V->length - T->length) * j;
-		if (S->size < S->length + length) {
-	        int newsize = S->length + length;
-	        char *newdata = realloc(S->data, newsize);
-	        S->size = newsize;
-	        S->data = newdata;
-	    }
-	    for (i = 0; i < j; i++) {
-
-	    }
-	} else {
-
-	}
+    for (i = j; i > 0; i--) {
+    	// 从S中删除第a[i]个字符起长度为T->length的子串T
+    	StrDelete(S, a[i], T->length);
+    	// 在串S的第a[i]个字符之前插入串V
+    	StrInsert(S, a[i], V);
+    }
 	return 1;
 }
 
 
 /* 在串S的第pos个字符之前插入串T */
-int StrInsert(S, pos, T) {
-
+int StrInsert(String *S, int pos, String *T) {
+	if (pos >= S->length) {
+		return 0;
+	}
+	if (S->size < S->length + T->length) {
+		int newsize = S->length + T->length;
+	    char *newdata = realloc(S->data, newsize);
+	    S->size = newsize;
+	    S->data = newdata;
+	}
+	int i;
+	// 把pos之后的数据往后迁移
+	for (i = S->length + T->length; i < pos + T->length; i--) {
+		S->*data(i) = S->*data(i - T->length);
+	}
+	// 将V的值填充到迁移出来的位置
+	for (i = 0; i < V->length; i++) {
+		S->*data(pos + i) = V->*data(i);
+	}
+	S->length += T->length;
+	return 1;
 }
 
 
@@ -262,7 +270,7 @@ int StrDelete(String *S, int pos, int length) {
 	for (i = pos + length - 1; i > pos - 1; i--) {
 		free(S->(data+i));
 	}
-	S->length = S->length - length;
+	S->length -= - length;
 	if (S->size > length && S->size > MAXSIZE) {
         int newsize = MAXSIZE;
         char *newdata = realloc(S->data, newsize);
