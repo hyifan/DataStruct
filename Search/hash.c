@@ -1,60 +1,89 @@
-#define SUCCESS 1
-#define UNSUCCESS 0
-#define HASHSIZE 12 /* 定义散列表长为数组的长度 */
-#define NULLKEY -32768
-#define OK 1
-
-typedef int Status;
+/*
+哈希表（）
+*/
 
 
-typedef struct {
-	int *elem; /* 数据元素存储基址，动态分配数组 */
-	int count; /* 当前数据元素个数 */
+#include <stdio.h>
+#include <stdlib.h>
+
+
+#define MAXSIZE 12
+
+
+typedef struct HashNode {
+	int key;
+	int value;
+	struct HashNode *next;
+} HashNode;
+
+
+typedef struct HashTable {
+	HashNode **buckets; /* 存储指针的数组 */
 } HashTable;
 
 
-int m = 0; /* 散列表表长，全局变量 */
+/* 初始化哈希表 */
+HashTable *InitHashTable() {
+	HashTable *ht = malloc(sizeof(HashTable));
+	ht->buckets = malloc(sizeof(HashNode *) * MAXSIZE);
+	return ht;
+}
 
 
-/* 初始化散列表 */
-Status InitHashTable(HashTable *H) {
+/* 哈希函数 计算哈希地址 */
+int hashfunc(int key) {
+	return key % 11; /* 11为小于MAXSIZE的最大质数，可保存buckets长度足够 */
+}
+
+
+/* 采用链表法将 {key value} 插入 hash table */
+int hashTableInsert(HashTable *ht, int key, int value) {
+    int idx = hashfunc(key);
+
+	HashNode *node = malloc(sizeof(HashNode));
+	node->key = key;
+	node->value = value;
+	node->next = ht->buckets[idx];
+	ht->buckets[idx] = node;
+
+	return 1;
+}
+
+
+/* 通过哈希函数寻找value */
+int hashtableFind(HashTable *ht, int key, int *value) {
+	int idx = hashfunc(key);
+	HashNode *node = ht->buckets[idx];
+
+	while (node) {
+		if (node->key == key) {
+			*value = node->value;
+			return 1;
+		}
+		node = node->next;
+	}
+
+	return 0;
+}
+
+
+int main(int argc, char *argv[]) {
+	/* 查找各元素在 [A, B, C, D, E, F, G, H, I, J, K, L, M, N] 中的位置，即key为A,B,...,N，对应的value为0,1,...,14 */
 	int i;
-	m = HASHSIZE;
-	H->count = m;
-	H->elem = (int *)malloc(m*sizeof(int));
-	for (i = 0; i < m; i++) {
-		H->elem[i] = NULLKEY;
+	int value;
+	char data[14] = "ABCDEFGHIJKLMN";
+
+	HashTable *ht = InitHashTable();
+
+	for (i = 0; i < 14; i++) {
+		hashTableInsert(ht, data[i], i);
 	}
-	return OK;
-}
 
-
-/* 散列函数 */
-int Hash(int key) {
-	return key % m; /* 除留余数法 */
-}
-
-
-/* 插入关键字进散列表 */
-void InsertHash(HashTable *H, int key) {
-	int addr = Hash(key); /* 求散列地址 */
-	while (H->elem[addr] != NULLKEY) {
-		/* 如果不为空，则冲突 */
-		addr = (addr + 1) % m;
-	}
-	H->elem[addr] = key;
-}
-
-
-/* 散列表查找关键字 */
-Status SearchHash(HashTable H, int key, int *addr) {
-	*addr = Hash(key);
-	while (H.elem[*addr] != key) {
-		*addr = (*addr + 1) % m;
-		if (H.elem[*addr] == NULLKEY || *addr == Hash(key)) {
-			return UNSUCCESS;
+	for (i = 0; i < 14; i++) {
+		if (hashtableFind(ht, data[i], &value)) {
+			printf("%d\n", value);
 		}
 	}
-	return SUCCESS;
-}
 
+	return 1;
+}
