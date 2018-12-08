@@ -28,11 +28,15 @@
 binary.c
 ```
 Operation
-    InitTree(*Tree)：构造空树Tree
-    TreeEmpty(Tree)：若Tree为空树，返回True，否则返回False
+    InitTree(*val)：初始化
     ClearTree(*Tree)：若树Tree存在，则将树Tree清为空树
     TreeDepth(Tree)：返回Tree的深度
-    Root(Tree)：返回Tree的根结点
-    InsertChild(*p, i, c)：其中p指向树Tree的某个结点，i为0表示左子树1表示右子树，非空树c与Tree不相交，操作结果为插入c为树Tree中p结点的第i棵子树（0是左子树，1为右子树）
-    DeleteChild(*p, i)：其中p指向树Tree的某个结点，i为0表示左子树1表示右子树，非空树c与Tree不相交，操作结果为删除Tree中p结点的第i棵子树（0是左子树，1为右子树）
+    InsertNode(*p, *c)：插入c为树Tree中p结点的第i棵子树（0是左子树，1为右子树）
+    DeleteChild(*p, i)：删除Tree中p结点的第i棵子树（0是左子树，1为右子树）
+```
+<br/>
+<br/>
+
+```
+gcc traverse.c binary.c -o tree
 ```

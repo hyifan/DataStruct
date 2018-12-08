@@ -116,5 +116,6 @@ int main(int argc, char *argv[]) {
 	printf("%d %d\n", isEmpty1, isEmpty2);
 
 	free(list);
+	return 1;
 }
 

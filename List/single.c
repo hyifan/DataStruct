@@ -150,5 +150,6 @@ int main(int argc, char *argv[]) {
 	printf("%d %d %d\n", locate, isEmpty1, isEmpty2);
 
 	free(list);
+	return 1;
 }
 

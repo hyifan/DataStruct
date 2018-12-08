@@ -10,48 +10,6 @@
 #define MAXSIZE 20 /*存储空间初始化分配量*/
 
 
-/* 辅助函数start */
-int strlen(char *str) {
-	// 计算str长度
-	int i;
-	for (i = 0; *(str+i) != '\0'; i++) {
-		;
-	}
-	return i;
-}
-
-
-void memcpy(char *data, char*str, length) {
-	// 将str的前length字符加在data后面
-	int i;
-	for (i = 0; i < length; i++) {
-		*(data+i) = *(str+i);
-	}
-}
-
-
-void get_next(String *T, int *next) {
-	int i,j;
-	i = 1;
-	j = 0;
-	next[1] = 0;
-	while (i < T[0]) {
-		if (j == 0 || T[i] == T[j]) {
-			i++;
-			j++;
-			if (T[i] != T[j]) {
-				next[i] = j;
-			} else {
-				next[i] = next[j];
-			}
-		} else {
-			j = next[j]
-		}
-	}
-}
-/* 辅助函数end */
-
-
 typedef struct String {
     int length;
     int size;
@@ -64,13 +22,45 @@ String *InitString() {
 	String *S = malloc(sizeof(String));
     S->length = 0;
     S->size = MAXSIZE;
-    S->data = malloc(MAXSIZE);
+    S->data = malloc(sizeof(char) * MAXSIZE);
     return S;
 }
 
+
+/*---辅助函数start ---*/
+/* 计算str长度 */
+int strlength(char *str) {
+	int i;
+	for (i = 0; *(str+i) != '\0'; i++) {
+		;
+	}
+	return i;
+}
+
+
+/* 将str的前length字符加在data后面 */
+void memcopy(char *data, char*str, int length) {
+	int i;
+	for (i = 0; i < length; i++) {
+		data[i] = str[i];
+	}
+}
+
+
+/* 打印字符串 */
+void printString(String *S) {
+	int i;
+	for (i = 0; i < S->length; i++) {
+		printf("%c", S->data[i]);
+	}
+	printf(" ");
+}
+/*--- 辅助函数end ---*/
+
+
 /* 生成一个其值等于字符串常量str的串S */
 int StrAssign(String *S, char *str) {
-    int length = strlen(str);
+    int length = strlength(str);
 
     if (S->size < length) {
         int newsize = S->size + length;
@@ -79,7 +69,7 @@ int StrAssign(String *S, char *str) {
         S->data = newdata;
     }
 
-    memcpy(S->data, str, length);
+    memcopy(S->data, str, length);
     S->length += length;
 	return 1;
 }
@@ -98,19 +88,23 @@ int StrCopy(String *T, String *S) {
 	}
 
 	int i;
-	for (i=0; i<S->length; i++) {
-		T->*(data+i) = S->*(data+i);
+	for (i = 0; i < S->length; i++) {
+		T->data[i] = S->data[i];
 	}
+	T->length = S->length;
 	return 1;
 }
 
 
 /* 串S存在，将串清空 */
 int ClearString(String *S) {
-    free(S->data);
     S->length = 0;
-    S->size = MAXSIZE;
-    S->data = malloc(MAXSIZE);
+    if (S->size > MAXSIZE) {
+    	int newsize = MAXSIZE;
+        char *newdata = realloc(S->data, newsize);
+        S->size = newsize;
+        S->data = newdata;
+    }
 	return 1;
 }
 
@@ -126,9 +120,9 @@ int StrCompare(String *S, String *T) {
 	int length = S->length > T->length ? T->length : S->length;
 	int i;
 	for (int i = 0; i<length; i++) {
-		if (S->*(data+i) > T->*(data+i)) {
+		if (S->data[i] > T->data[i]) {
 			return 1;
-		} else if (S->*(data+i) < T->*(data+i)) {
+		} else if (S->data[i] < T->data[i]) {
 			return -1;
 		}
 	}
@@ -144,9 +138,6 @@ int StrCompare(String *S, String *T) {
 
 /* 用T返回由串S1和串S2连接而成的新串 */
 int Concat(String *T, String *S1, String *S2) {
-	if (T->length > 0) {
-		return 0;
-	}
     int length = S1->length + S2->length;
 
     if (T->size < length) {
@@ -158,10 +149,10 @@ int Concat(String *T, String *S1, String *S2) {
 
     int i, j;
 	for (i=0; i<S1->length; i++) {
-		T->*(data+i) = S1->*(data+i);
+		T->data[i] = S1->data[i];
 	}
-	for (j=0; i<S2->length; j++) {
-		T->*(data+i+j) = S2->*(data+j);
+	for (j=0; j<S2->length; j++) {
+		T->data[i+j] = S2->data[j];
 	}
 
     T->length = length;
@@ -170,7 +161,7 @@ int Concat(String *T, String *S1, String *S2) {
 
 
 /* 串S存在，用Sub返回串S的第pos个字符起长度为length的子串 */
-int SubString(String *Sub, String *S, int pos, length) {
+int SubString(String *Sub, String *S, int pos, int length) {
 	if (S->length - pos < length || Sub->length > 0) {
 		return 0;
 	}
@@ -181,8 +172,8 @@ int SubString(String *Sub, String *S, int pos, length) {
         Sub->data = newdata;
     }
 	int i;
-	for (i = 0; i < len; i++) {
-		Sub->*(data+i) = S->*(data+pos+i);
+	for (i = 0; i < length; i++) {
+		Sub->data[i] = S->data[pos+i];
 	}
 	Sub->length = length;
 	return 1;
@@ -190,49 +181,28 @@ int SubString(String *Sub, String *S, int pos, length) {
 
 
 /* 若主串S中存在和串T值相同的子串，则返回它在主串S中第pos个字符之后第一次出现的位置，否则返回-1 */
-/* 使用KMP模式匹配算法 */
 int Index(String *S, String *T, int pos) {
-	int i = pos;
-	int j = 1;
-	int next[255];
-	get_next(T, next);
-	while (i <= S[0] && j <= T[0]) {
-		if (j == 0 || S[i] == T[j]) {
-			i++;
-			j++;
-		} else {
-			j = next[j];
+	int i, j;
+
+	for (i = 0; i < S->length; i++) {
+		j = 0;
+		if (S->data[i] == T->data[0]) {
+			if (S->length - i < T->length) {
+				return -1;
+			}
+
+			for (j = 1; j < T->length; j++) {
+				if (S->data[j] != T->data[j]) {
+					goto next;
+				}
+			}
+			return i;
 		}
-	}
-	if (j > T[0]) {
-		return i-T[0];
-	} else {
-		return -1;
-	}
-}
 
-
-/* 用V替换主串S中出现的所有与T相等的不重叠的子串 */
-int Replace(String *S, String *T, String *V) {
-	int a[];
-	int i = 0;
-	int j = 0;
-	while (i = Index(S, T, i) >= 0) {
-		a[j] = i;
-		i = i + T->length;
-		j++;
-	}
-	if (j == 0) {
-		return 0;
+ 		next:;
 	}
 
-    for (i = j; i > 0; i--) {
-    	// 从S中删除第a[i]个字符起长度为T->length的子串T
-    	StrDelete(S, a[i], T->length);
-    	// 在串S的第a[i]个字符之前插入串V
-    	StrInsert(S, a[i], V);
-    }
-	return 1;
+	return -1;
 }
 
 
@@ -250,11 +220,11 @@ int StrInsert(String *S, int pos, String *T) {
 	int i;
 	// 把pos之后的数据往后迁移
 	for (i = S->length + T->length; i < pos + T->length; i--) {
-		S->*data(i) = S->*data(i - T->length);
+	    S->data[i] = S->data[i - T->length];
 	}
-	// 将V的值填充到迁移出来的位置
-	for (i = 0; i < V->length; i++) {
-		S->*data(pos + i) = V->*data(i);
+	// 将T的值填充到迁移出来的位置
+	for (i = 0; i < T->length; i++) {
+		S->data[pos + i] = T->data[i];
 	}
 	S->length += T->length;
 	return 1;
@@ -267,8 +237,8 @@ int StrDelete(String *S, int pos, int length) {
 		return 0;
 	}
 	int i;
-	for (i = pos + length - 1; i > pos - 1; i--) {
-		free(S->(data+i));
+	for (i = pos + length - 1; i < S->length; i++) {
+		S->data[i - length] = S->data[i];
 	}
 	S->length -= - length;
 	if (S->size > length && S->size > MAXSIZE) {
@@ -281,27 +251,64 @@ int StrDelete(String *S, int pos, int length) {
 }
 
 
+/* 用V替换主串S中出现的所有与T相等的不重叠的子串 */
+int Replace(String *S, String *T, String *V) {
+	int i = Index(S, T, 0);
+	int j = 0;
+	
+	if (i < 0) {
+		return 0;
+	}
+
+	int *a = malloc(sizeof(int) * S->length);
+	while (i >= 0) {
+		a[j] = i;
+		i = Index(S, T, i + T->length);
+		j++;
+	}
+
+    for (i = j; i > 0; i--) {
+    	// 从S中删除第a[i]个字符起长度为T->length的子串T
+    	StrDelete(S, a[i], T->length);
+    	// 在串S的第a[i]个字符之前插入串V
+    	StrInsert(S, a[i], V);
+    }
+    free(a);
+	return 1;
+}
+
+
 int main(int argc, char *argv[]) {
 	String *S1 = InitString();
-	StrAssign(*S1, 'hello');
+	StrAssign(S1, "hello");
 
 	String *T = InitString();
-	StrCopy(*T, *S1);
+	StrCopy(T, S1);
 
-	StrCompare(*T, *S1);
+	int compare = StrCompare(S1, T);
 
-	int empty1 = StringEmpty(*T);
-	ClearString(*T);
-	int empty2 = StringEmpty(*T);
+	printString(S1);
+	printString(T);
+	printf("%d ", compare);
+
+	int isEmpty1 = StringEmpty(T);
+	ClearString(T);
+	int isEmpty2 = StringEmpty(T);
+
+	printf("%d %d\n", isEmpty1, isEmpty2);
 
 	String *S2 = InitString();
-	StrAssign(*S2, ' world!');
-	Concat(*T, *S1, *S2);
+	StrAssign(S2, " world!");
+	Concat(T, S1, S2);
+	
+	printString(S1);
+	printString(S2);	
+	printString(T);
+	printf("\n");
 
-
-
-	free(*S1);
-	free(*S2);
-	free(*T);
+	free(S1);
+	free(S2);
+	free(T);
+	return 1;
 }
 

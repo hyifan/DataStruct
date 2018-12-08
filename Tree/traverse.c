@@ -5,36 +5,37 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "tree.h"
 
 
 /* 前序遍历 */
-void PreOrderTraverse(BiTree T) {
-	if (T == NULL) {
+void PreOrderTraverse(Node *root) {
+	if (root == NULL) {
 		return;
 	}
-	printf("%c\n", T->data);
-	PreOrderTraverse(T->lchild);
-	PreOrderTraverse(T->rchild);
+	printf("%c", root->data);
+	PreOrderTraverse(root->lchild);
+	PreOrderTraverse(root->rchild);
 }
 
 
 /* 中序遍历 */
-void InOrderTraverse(BiTree T) {
-	if (T == NULL) {
+void InOrderTraverse(Node *root) {
+	if (root == NULL) {
 		return;
 	}
-	InOrderTraverse(T->lchild);
-	printf("%c\n", T->data);
-	InOrderTraverse(T->rchild);
+	InOrderTraverse(root->lchild);
+	printf("%c", root->data);
+	InOrderTraverse(root->rchild);
 }
 
 
 /* 后序遍历 */
-void PostOrderTraverse(BiTree T) {
-	if (T == NULL) {
+void PostOrderTraverse(Node *root) {
+	if (root == NULL) {
 		return;
 	}
-	PostOrderTraverse(T->lchild);
-	PostOrderTraverse(T->rchild);
-	printf("%c\n", T->data);
+	PostOrderTraverse(root->lchild);
+	PostOrderTraverse(root->rchild);
+	printf("%c", root->data);
 }
