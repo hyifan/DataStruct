@@ -4,3 +4,6 @@
 <br/>
 
 该demo实现冒泡排序(bubble.c)、简单选择排序(simple.c)、直接插入排序(insert.c)、希尔排序(shell.c)、堆排序(heap.c)、归并排序(merging.c)、快速排序(quick.c)。
+
+gcc bubble.c list.c -o bubble
+gcc simple.c list.c -o simple

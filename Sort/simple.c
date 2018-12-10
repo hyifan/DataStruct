@@ -6,13 +6,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "list.h"
 
 
 void SelectSort(SqList *list) {
 	int i, j, min;
 	for (i = 1; i < list->length; i++) {
 		min = i;
-		for (j = i + 1; j <= list->length; j++) {
+		for (j = i + 1; j < list->length; j++) {
 			if (list->data[min] > list->data[j]) {
 				min = j;
 			}
@@ -29,32 +30,30 @@ int main(int argc, char *argv[]) {
 	int i;
 
 	int arr[10];
-	arr[0] = 2;
-	arr[1] = 5;
-	arr[2] = 6;
-	arr[3] = 7;
-	arr[4] = 1;
-	arr[5] = 10;
-	arr[6] = 8;
-	arr[7] = 9;
-	arr[8] = 3;
-	arr[9] = 4;
+	arr[0] = 7;
+	arr[1] = 9;
+	arr[2] = 8;
+	arr[3] = 10;
+	arr[4] = 3;
+	arr[5] = 5;
+	arr[6] = 4;
+	arr[7] = 6;
+	arr[8] = 1;
+	arr[9] = 2;
 
-	/* 插入 */
+	/* 按 arr 顺序插入 */
 	for (i = 0; i < 10; i++) {
 		ListInsert(list, i, arr[i]);
-		printf("%d ", i);
+		printf("%d ", arr[i]);
 	}
 	printf("\n");
 
-	/* 排序 */
+	/* 排序 12345... */
 	SelectSort(list);
 
 	/* 输出排序后的结果 */
 	for (i = 0; i < list->length; i++) {
-		int elem;
-		GetElem(list, i, &elem);
-		printf("%d ", elem);
+		printf("%d ", list->data[i]);
 	}
-
+	printf("\n");
 }

@@ -9,8 +9,7 @@
 #define MAXSIZE 20 /*存储空间初始化分配量*/
 
 
-typedef struct SqList
-{
+typedef struct SqList {
 	int data[MAXSIZE];
 	int length;
 } SqList;
@@ -91,14 +90,6 @@ int ListDelete(SqList *list, int i, int *e) {
 	}
 	list->length--;
 	return 1;
-}
-
-
-/* 交换 list->data[i] 和 list->data[j] 的位置，为之后的排序算法做准备 */
-void swap(SqList *list, i, j) {
-	int i = list->data[i];
-	list->data[i] = list->data[j];
-	list->data[j] = i;
 }
 
 
