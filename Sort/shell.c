@@ -1,11 +1,12 @@
 /*
 希尔排序（Shell Sort）
-
+对直接插入排序进行改进，将原本有大量数据进行分组，分割成若干个子序列，在子序列内部进行直接插入排序，当整个序列都基本有序，再对全体数据进行直接插入排序。
 */
 
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "list.h"
 
 
 void ShellSort(SqList *list) {
