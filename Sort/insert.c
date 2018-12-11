@@ -14,7 +14,7 @@ void InsertSort(SqList *list) {
 	for (i = 1; i < list->length; i++) {
 		if (list->data[i] < list->data[i-1]) {
 			num = list->data[i];
-			for (j = i - 1; list->data[j] > num; j--) {
+			for (j = i - 1; j >= 0 && list->data[j] > num; j--) {
 				list->data[j+1] = list->data[j]; /* data[j]比num大，后移一位 */
 			}
 			list->data[j+1] = num;
